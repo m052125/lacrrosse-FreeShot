@@ -3,149 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>フリシュー記録ダッシュボード</title>
+    <title>🐬 フリシュー 記録ダッシュボード</title>
     <style>
-        /* === 全体の設定 === */
+        /* === チームカラー設定 === */
+        :root {
+            --navy: #0F2027; 
+            --navy-light: #203A43;
+            --orange: #FF7000; 
+            --orange-light: #FF9E40;
+            --marine: #4FC3F7; 
+            --panel-bg: rgba(255, 255, 255, 0.95);
+        }
+
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            background-color: #2E7D32;
-            background-image: radial-gradient(#388E3C 15%, transparent 16%), radial-gradient(#388E3C 15%, transparent 16%);
-            background-size: 15px 15px; background-position: 0 0, 7.5px 7.5px;
+            background: linear-gradient(to bottom right, var(--navy), var(--navy-light));
             margin: 0; padding: 10px; color: #333;
-            display: flex; flex-direction: column;
-            height: 100vh; box-sizing: border-box; overflow: hidden;
+            display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; overflow: hidden;
         }
 
-        .main-container {
-            display: flex; flex-grow: 1; justify-content: space-between; gap: 10px;
-            height: calc(100vh - 100px);
-        }
+        button { user-select: none; transition: 0.15s ease-in-out; }
+
+        .main-container { display: flex; flex-grow: 1; justify-content: space-between; gap: 15px; height: calc(100vh - 85px); }
 
         .panel {
-            background: rgba(255, 255, 255, 0.9); padding: 10px; border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3); box-sizing: border-box;
-            display: flex; flex-direction: column;
+            background: var(--panel-bg); border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4); border-top: 5px solid var(--orange);
+            display: flex; flex-direction: column; padding: 15px; box-sizing: border-box;
         }
 
-        h3 { margin-top: 0; margin-bottom: 8px; text-align: center; color: #1b5e20; font-size: 15px; }
+        h3 { margin-top: 0; margin-bottom: 10px; text-align: center; color: var(--navy); font-size: 16px; font-weight: 900; }
 
-        /* === ① 左パネル：選手一覧 === */
-        .left-panel { flex: 0 0 230px; }
-        .add-member-form { display: flex; gap: 5px; margin-bottom: 10px; border-bottom: 2px solid #ccc; padding-bottom: 10px; }
-        .add-member-form input { flex-grow: 1; padding: 8px; border-radius: 6px; border: 1px solid #999; font-size: 14px; }
-        .add-member-form button { padding: 8px 12px; background-color: #388E3C; color: white; border-color: #1b5e20; border-radius: 6px; cursor: pointer;}
+        /* === ① 左パネル === */
+        .left-panel { flex: 0 0 240px; }
+        .add-member-form { display: flex; gap: 5px; margin-bottom: 10px; }
+        .add-member-form input { flex-grow: 1; padding: 8px; border-radius: 6px; border: 1px solid #aaa; font-size: 14px; }
+        .add-member-form button { padding: 8px 12px; background-color: var(--navy-light); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;}
+        
         .shooter-grid-container { flex-grow: 1; overflow-y: auto; padding-right: 5px; }
-        .shooter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+        .shooter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
         button.shooter-btn {
-            background-color: #f1f8e9; border: 2px solid #aed581; border-radius: 15px;
-            padding: 8px 0; font-size: 14px; font-weight: bold; color: #33691e;
-            cursor: pointer; transition: 0.1s; width: 100%; box-shadow: 1px 2px 0px rgba(0,0,0,0.2);
+            background-color: #fff; border: 2px solid #ffcc80; border-radius: 8px;
+            padding: 10px 0; font-size: 14px; font-weight: bold; color: #d84315;
+            cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        button.shooter-btn:active { transform: translateY(1px); box-shadow: 0px 1px 0px rgba(0,0,0,0.2); }
-        button.shooter-btn.selected { background-color: #ff9800; border-color: #e65100; color: white; }
+        button.shooter-btn:active { transform: translateY(2px); box-shadow: none; }
+        button.shooter-btn.selected { background-color: var(--orange); border-color: var(--orange-light); color: white; }
 
-        /* === ② 中央パネル：UIエリア === */
-        .center-panel {
-            flex: 2; display: flex; flex-direction: column;
-            align-items: center; justify-content: flex-start; padding: 0;
-        }
+        /* === ② 中央パネル === */
+        .center-panel { flex: 2; align-items: center; justify-content: flex-start; }
         
-        /* 3x3 コースグリッド */
-        .course-grid {
-            display: grid; grid-template-columns: repeat(3, 70px); gap: 6px;
-            margin-top: 10px; position: relative; z-index: 10;
-        }
+        .course-grid { display: grid; grid-template-columns: repeat(3, 70px); gap: 6px; margin-top: 10px; position: relative; z-index: 10; }
         .course-grid button {
-            height: 70px; font-size: 28px; background-color: #8bc34a; color: white; border-color: #689f38;
-            border-radius: 10px; border-width: 3px; font-weight: bold; cursor: pointer;
+            height: 70px; font-size: 28px; background-color: rgba(255,255,255,0.8); color: var(--navy);
+            border: 2px solid var(--navy-light); border-radius: 8px; font-weight: 900; cursor: pointer;
         }
-        .course-grid button.selected { background-color: #ff9800; border-color: #e65100; }
+        .course-grid button.selected { background-color: var(--orange); border-color: #fff; color: white; }
 
-        /* 扇形SVGエリア */
-        .svg-container {
-            width: 100%; max-width: 480px; position: relative;
-            
-            z-index: 1;
-        }
-        
-        .area-path { stroke: #000; stroke-width: 2; cursor: pointer; transition: 0.1s; }
-        .area-path.orange { fill: #FFCC80; }
-        .area-path.pink { fill: #F48FB1; }
+        .svg-container { width: 100%; max-width: 480px; position: relative; margin-top: -65px; z-index: 1; }
+        .area-path { stroke: var(--navy); stroke-width: 2; cursor: pointer; }
+        .area-path.orange-slice { fill: #FFE0B2; }
+        .area-path.marine-slice { fill: #B3E5FC; }
         .area-path:hover { opacity: 0.8; }
-        .area-path.selected { fill: #00E676; stroke: #00C853; stroke-width: 4; }
-        .area-text { fill: #fff; font-size: 24px; font-weight: bold; pointer-events: none; text-anchor: middle; dominant-baseline: middle; }
+        .area-path.selected { fill: var(--orange); stroke: #fff; stroke-width: 3; }
+        .area-text { fill: var(--navy); font-size: 24px; font-weight: 900; pointer-events: none; text-anchor: middle; dominant-baseline: middle; }
+        .area-path.selected + .area-text { fill: white; }
 
-        /* 打つ位置ボタン */
-        .pos-row {
-            display: flex; justify-content: center; gap: 8px; width: 100%; margin-top: 10px;
-        }
+        .pos-row { display: flex; justify-content: center; gap: 8px; width: 100%; margin-top: 10px; }
         .pos-row button {
-            background-color: #f5f5f5; border: 2px solid #ccc; border-radius: 8px;
-            padding: 10px 15px; font-size: 15px; font-weight: bold; color: #333; cursor: pointer;
+            background-color: #fff; border: 2px solid #ccc; border-radius: 8px;
+            padding: 10px 15px; font-size: 15px; font-weight: bold; color: #555; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .pos-row button.selected { background-color: #ff9800; border-color: #e65100; color: white; }
+        .pos-row button.selected { background-color: var(--navy-light); border-color: var(--navy); color: white; }
 
-        /* === ③ 右パネル：ゴーリー＆ステータス === */
+        /* === ③ 右パネル === */
         .right-panel { flex: 1; }
-        .right-panel select { width: 100%; font-size: 18px; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: 2px solid #ccc;}
+        .goalie-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 15px; }
+        select { width: 100%; font-size: 16px; padding: 10px; border-radius: 8px; border: 2px solid #ccc; font-weight: bold; background: #fff;}
+        .add-goalie-form { display: flex; gap: 5px; }
+        .add-goalie-form input { flex-grow: 1; padding: 6px; border-radius: 6px; border: 1px solid #aaa; font-size: 13px; }
+        .add-goalie-form button { padding: 6px 10px; background-color: var(--navy-light); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        
         #statusBox {
-            background: #263238; color: #eceff1; padding: 15px; border-radius: 8px;
-            font-size: 16px; line-height: 1.8; font-weight: bold; flex-grow: 1;
+            background: var(--navy); color: white; padding: 15px; border-radius: 12px;
+            font-size: 15px; line-height: 1.8; font-weight: bold; flex-grow: 1; border: 2px solid var(--navy-light);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
-        .val { color: #64ffda; }
+        .val { color: var(--marine); }
 
-        /* === ④ 下部：結果送信パネル === */
+        /* === ④ 下部パネル === */
         .bottom-panel {
-            background: rgba(255, 255, 255, 0.95); padding: 10px; border-radius: 12px;
-            margin-top: 10px; display: flex; justify-content: center; gap: 10px;
-            height: 60px; align-items: center; box-shadow: 0 -4px 6px rgba(0,0,0,0.2);
+            background: var(--panel-bg); padding: 10px; border-radius: 12px; margin-top: 10px;
+            display: flex; justify-content: center; gap: 15px; height: 65px; align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4); border-top: 4px solid var(--orange);
         }
         .result-btn {
-            background-color: #eeeeee; border: 2px solid #9e9e9e; border-radius: 8px;
-            padding: 10px 18px; font-size: 16px; font-weight: bold; color: #424242;
-            cursor: pointer; box-shadow: 1px 2px 0px rgba(0,0,0,0.1);
+            flex: 1; max-width: 200px; height: 100%; border-radius: 8px; border: none;
+            font-size: 18px; font-weight: 900; color: white; cursor: pointer; letter-spacing: 1px;
+            transition: 0.1s;
         }
-        .result-btn:active { transform: translateY(1px); box-shadow: 0px 1px 0px rgba(0,0,0,0.1); }
-        .btn-goal { background-color: #ffcdd2; border-color: #f44336; color: #b71c1c; }
-        .btn-save { background-color: #bbdefb; border-color: #2196f3; color: #0d47a1; }
+        .result-btn:active { transform: translateY(3px); }
+        .btn-goal { background-color: var(--orange); box-shadow: 0 4px 0px #c65300; }
+        .btn-save { background-color: var(--marine); box-shadow: 0 4px 0px #0288d1; }
+        .btn-out { background-color: #78909c; box-shadow: 0 4px 0px #455a64; }
+        .btn-miss { background-color: #e53935; box-shadow: 0 4px 0px #b71c1c; }
     </style>
 </head>
 <body>
 
     <div class="main-container">
         <div class="left-panel panel">
-            <h3>🏃 選手</h3>
+            <h3>🏃 AT (Shooter)</h3>
             <div class="add-member-form">
                 <input type="text" id="addMemberInput" placeholder="背番号(例: 99)">
                 <button onclick="addMember()">追加</button>
             </div>
             <div class="shooter-grid-container">
                 <div class="shooter-grid" id="shooterGrid">
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#0', this)">#0</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#10', this)">#10</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#32', this)">#32</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#01', this)">#01</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#12', this)">#12</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#33', this)">#33</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#02', this)">#02</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#13', this)">#13</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#55', this)">#55</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#05', this)">#05</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#15', this)">#15</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#56', this)">#56</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#06', this)">#06</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#17', this)">#17</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#57', this)">#57</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#07', this)">#07</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#18', this)">#18</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#72', this)">#72</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#08', this)">#08</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#21', this)">#21</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#77', this)">#77</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#09', this)">#09</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#28', this)">#28</button>
-                    <button class="shooter-btn" data-category="shooter" onclick="selectItem('shooter', '#98', this)">#98</button>
-                </div>
+                    </div>
             </div>
         </div>
 
@@ -165,36 +140,32 @@
             <div class="svg-container">
                 <svg viewBox="0 40 500 260" width="100%" height="auto">
                     <g transform="rotate(72, 250, 50)">
-                        <path class="area-path pink" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '6', this)"></path>
-                        <path class="area-path orange" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '1', this)"></path>
+                        <path class="area-path marine-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '6', this)"></path>
+                        <path class="area-path orange-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '1', this)"></path>
                         <text x="250" y="240" transform="rotate(-72, 250, 240)" class="area-text">6</text>
                         <text x="250" y="150" transform="rotate(-72, 250, 150)" class="area-text">1</text>
                     </g>
-
                     <g transform="rotate(36, 250, 50)">
-                        <path class="area-path orange" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '7', this)"></path>
-                        <path class="area-path pink" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '2', this)"></path>
+                        <path class="area-path orange-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '7', this)"></path>
+                        <path class="area-path marine-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '2', this)"></path>
                         <text x="250" y="240" transform="rotate(-36, 250, 240)" class="area-text">7</text>
                         <text x="250" y="150" transform="rotate(-36, 250, 150)" class="area-text">2</text>
                     </g>
-
                     <g transform="rotate(0, 250, 50)">
-                        <path class="area-path pink" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '8', this)"></path>
-                        <path class="area-path orange" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '3', this)"></path>
+                        <path class="area-path marine-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '8', this)"></path>
+                        <path class="area-path orange-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '3', this)"></path>
                         <text x="250" y="240" class="area-text">8</text>
-                        <text x="250" y="150" class="area-text">3</text> 
+                        <text x="250" y="150" class="area-text">3</text>
                     </g>
-
                     <g transform="rotate(-36, 250, 50)">
-                        <path class="area-path orange" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '9', this)"></path>
-                        <path class="area-path pink" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '4', this)"></path>
+                        <path class="area-path orange-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '9', this)"></path>
+                        <path class="area-path marine-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '4', this)"></path>
                         <text x="250" y="240" transform="rotate(36, 250, 240)" class="area-text">9</text>
                         <text x="250" y="150" transform="rotate(36, 250, 150)" class="area-text">4</text>
                     </g>
-
                     <g transform="rotate(-72, 250, 50)">
-                        <path class="area-path pink" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '10', this)"></path>
-                        <path class="area-path orange" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '5', this)"></path>
+                        <path class="area-path marine-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '10', this)"></path>
+                        <path class="area-path orange-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '5', this)"></path>
                         <text x="250" y="240" transform="rotate(72, 250, 240)" class="area-text">10</text>
                         <text x="250" y="150" transform="rotate(72, 250, 150)" class="area-text">5</text>
                     </g>
@@ -211,11 +182,19 @@
         </div>
 
         <div class="right-panel panel">
-            <h3>🧤 ゴーリー</h3>
-            <select id="goalieSelect">
-                <option value="#87 まりも">#87 まりも</option>
-                <option value="#94 えぷ">#94 えぷ</option>
-            </select>
+            <h3>🧤 ゴーリー (Goalie)</h3>
+            <div class="goalie-group">
+                <select id="goalieSelect">
+                    <option value="#87 まりも">#87 まりも</option>
+                    <option value="#94 えぷ">#94 えぷ</option>
+                    <option value="コングちゃん">コングちゃん</option>
+                    <option value="その他">その他</option>
+                </select>
+                <div class="add-goalie-form">
+                    <input type="text" id="addGoalieInput" placeholder="新規ゴーリー追加">
+                    <button onclick="addGoalie()">追加</button>
+                </div>
+            </div>
 
             <div id="statusBox">
                 👤 選手: <span id="lblShooter" class="val">未選択</span><br>
@@ -227,32 +206,58 @@
     </div>
 
     <div class="bottom-panel">
-        <button class="result-btn btn-goal" onclick="recordResult('ゴール')">ゴール</button>
-        <button class="result-btn btn-save" onclick="recordResult('セーブ')">セーブ</button>
-        <button class="result-btn" onclick="recordResult('枠外')">枠外</button>
-        <button class="result-btn" onclick="recordResult('キープミス')">キープミス</button>
+        <button class="result-btn btn-goal" onclick="recordResult('ゴール')">ゴール (Goal)</button>
+        <button class="result-btn btn-save" onclick="recordResult('セーブ')">セーブ (Save)</button>
+        <button class="result-btn btn-out" onclick="recordResult('枠外')">枠外 (Out)</button>
+        <button class="result-btn btn-miss" onclick="recordResult('キープミス')">キープミス</button>
     </div>
 
     <script>
-        // --- フォーム設定 ---
+        const members = [
+            '#0', '#10', '#32', '#01', '#12', '#33', '#02', '#13', '#55',
+            '#05', '#15', '#56', '#06', '#17', '#57', '#07', '#18', '#72',
+            '#08', '#21', '#77', '#09', '#28', '#98'
+        ];
+
+        // ★フォームIDを書き換えてください
         const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSfj6tmsihXcLB0IrSAJOmEoc6wmpn_5uTDC4xEVc-jb_eGh_g/formResponse";
-        const entries = {
-            goalie: "entry.936925429",
-            shooter: "entry.2097307624",
-            pos: "entry.1120779862",
-            area: "entry.XXXXX", // ★新しいエリアのentry番号に書き換えてください
-            target: "entry.1657406525",
-            result: "entry.1439118581"
-        };
+        const entries = { goalie: "entry.936925429", shooter: "entry.2097307624", pos: "entry.1120779862", area: "entry.XXXXX", target: "entry.1657406525", result: "entry.1439118581" };
 
         let currentData = { shooter: "", pos: "", area: "", target: "" };
+
+        function renderMembers() {
+            const grid = document.getElementById('shooterGrid');
+            grid.innerHTML = '';
+            members.forEach(num => {
+                const selected = (currentData.shooter === num) ? 'selected' : '';
+                grid.innerHTML += `<button class="shooter-btn ${selected}" data-category="shooter" onclick="selectItem('shooter', '${num}', this)">${num}</button>`;
+            });
+        }
+
+        function addMember() {
+            const input = document.getElementById('addMemberInput');
+            const num = input.value.trim();
+            if (!num) return;
+            const fmtNum = num.startsWith('#') ? num : '#' + num;
+            if(!members.includes(fmtNum)) { members.push(fmtNum); renderMembers(); }
+            input.value = '';
+        }
+
+        function addGoalie() {
+            const input = document.getElementById('addGoalieInput');
+            const name = input.value.trim();
+            if (!name) return;
+            const select = document.getElementById('goalieSelect');
+            const newOption = document.createElement('option');
+            newOption.value = name; newOption.text = name;
+            select.add(newOption); select.value = name;
+            input.value = '';
+        }
 
         function selectItem(category, value, element) {
             currentData[category] = value;
             updateStatusText();
-
-            let elements = document.querySelectorAll(`[data-category='${category}']`);
-            elements.forEach(el => el.classList.remove('selected'));
+            document.querySelectorAll(`[data-category='${category}']`).forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
         }
 
@@ -264,50 +269,22 @@
         }
 
         function recordResult(resultValue) {
-            if (!currentData.shooter || !currentData.pos || !currentData.area || !currentData.target) {
-                alert("未入力の項目があります！");
-                return;
-            }
-
-            const goalieValue = document.getElementById("goalieSelect").value;
+            if (!currentData.shooter || !currentData.pos || !currentData.area || !currentData.target) { alert("未入力の項目があります！"); return; }
             const formData = new URLSearchParams();
-            formData.append(entries.goalie, goalieValue);
-            formData.append(entries.shooter, currentData.shooter);
-            formData.append(entries.pos, currentData.pos);
-            formData.append(entries.area, currentData.area);
-            formData.append(entries.target, currentData.target);
+            formData.append(entries.goalie, document.getElementById("goalieSelect").value);
+            formData.append(entries.shooter, currentData.shooter); formData.append(entries.pos, currentData.pos);
+            formData.append(entries.area, currentData.area); formData.append(entries.target, currentData.target);
             formData.append(entries.result, resultValue);
 
-            fetch(formURL, {
-                method: "POST", mode: "no-cors",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: formData
-            }).then(() => {
-                currentData.pos = ""; currentData.area = ""; currentData.target = "";
-                updateStatusText();
-                
+            fetch(formURL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: formData })
+            .then(() => {
+                currentData.pos = ""; currentData.area = ""; currentData.target = ""; updateStatusText();
                 document.querySelectorAll("[data-category='pos'], [data-category='area'], [data-category='target']").forEach(el => el.classList.remove('selected'));
-                
-                alert("✅ " + resultValue + " を記録しました！");
-            }).catch((error) => {
-                alert("エラー: 通信に失敗しました");
-            });
+                alert("🐬 " + resultValue + " を記録しました！");
+            }).catch(() => { alert("エラー: 通信に失敗しました"); });
         }
 
-        function addMember() {
-            const input = document.getElementById('addMemberInput');
-            const number = input.value.trim();
-            if (!number) return;
-            const formattedNumber = number.startsWith('#') ? number : '#' + number;
-            const grid = document.getElementById('shooterGrid');
-            const newButton = document.createElement('button');
-            newButton.className = 'shooter-btn';
-            newButton.setAttribute('data-category', 'shooter');
-            newButton.setAttribute('onclick', `selectItem('shooter', '${formattedNumber}', this)`);
-            newButton.innerText = formattedNumber;
-            grid.appendChild(newButton);
-            input.value = '';
-        }
+        renderMembers();
     </script>
 </body>
 </html>
