@@ -7,74 +7,43 @@
     <style>
         /* === チームカラー設定 === */
         :root {
-            --navy: #0F2027; 
-            --navy-light: #203A43;
-            --orange: #FF7000; 
-            --orange-light: #FF9E40;
-            --marine: #4FC3F7; 
-            --panel-bg: rgba(255, 255, 255, 0.95);
+            --navy: #0F2027; --navy-light: #203A43; --orange: #FF7000; --orange-light: #FF9E40;
+            --marine: #4FC3F7; --panel-bg: rgba(255, 255, 255, 0.95);
         }
-
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(to bottom right, var(--navy), var(--navy-light));
-            margin: 0; padding: 10px; color: #333;
-            display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; overflow: hidden;
+            margin: 0; padding: 10px; color: #333; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; overflow: hidden;
         }
-
         button { user-select: none; transition: 0.15s ease-in-out; }
-
         .main-container { display: flex; flex-grow: 1; justify-content: space-between; gap: 15px; height: calc(100vh - 85px); }
 
-        /* パネル共通設定 */
-        .panel {
-            background: var(--panel-bg); border-radius: 16px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4); border-top: 5px solid var(--orange);
-            display: flex; flex-direction: column; padding: 15px; box-sizing: border-box;
-        }
+        .panel { background: var(--panel-bg); border-radius: 16px; box-shadow: 0 8px 16px rgba(0,0,0,0.4); border-top: 5px solid var(--orange); display: flex; flex-direction: column; padding: 15px; box-sizing: border-box; }
 
-        /* === ① 左パネル (シューター) === */
+        /* 左パネル (シューター) */
         .left-panel { flex: 0 0 250px; padding: 10px; }
-        
         .add-member-form { display: flex; gap: 5px; margin-bottom: 15px; }
         .add-member-form input { flex-grow: 1; padding: 8px; border-radius: 6px; border: 1px solid #aaa; font-size: 14px; }
         .add-member-form button { padding: 8px 12px; background-color: var(--navy-light); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;}
         
         .player-section { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
         .player-section h4 { margin: 0 0 10px 0; text-align: center; font-size: 16px; font-weight: 900; color: var(--orange); letter-spacing: 1px; }
-        
         .shooter-grid-container { flex-grow: 1; overflow-y: auto; padding-right: 5px; }
         .shooter-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
         
-        button.shooter-btn {
-            background-color: #fff; border: 2px solid #ffcc80; border-radius: 8px;
-            padding: 10px 0; font-size: 15px; font-weight: bold; color: #d84315;
-            cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+        button.shooter-btn { background-color: #fff; border: 2px solid #ffcc80; border-radius: 8px; padding: 10px 0; font-size: 15px; font-weight: bold; color: #d84315; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         button.shooter-btn:active { transform: translateY(2px); box-shadow: none; }
         button.shooter-btn.selected { background-color: var(--orange); border-color: var(--orange-light); color: white; }
 
-        /* === ② 中央パネル (コート) === */
-        .center-panel {
-            flex: 2; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            position: relative; padding: 0;
-        }
-        
+        /* 中央パネル (コート) */
+        .center-panel { flex: 2; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 0; }
         .court-title { position: absolute; top: 15px; color: var(--navy); font-weight: 900; margin: 0; font-size: 18px; letter-spacing: 1px; }
-
-        .court-container {
-            position: relative; width: 100%; max-width: 500px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
+        .court-container { position: relative; width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
         .course-grid { display: grid; grid-template-columns: repeat(3, 65px); gap: 6px; position: relative; z-index: 10; }
-        .course-grid button {
-            height: 65px; font-size: 26px; background-color: rgba(255,255,255,0.85); color: var(--navy);
-            border: 2px solid var(--navy-light); border-radius: 8px; font-weight: 900; cursor: pointer;
-        }
+        .course-grid button { height: 65px; font-size: 26px; background-color: rgba(255,255,255,0.85); color: var(--navy); border: 2px solid var(--navy-light); border-radius: 8px; font-weight: 900; cursor: pointer; }
         .course-grid button.selected { background-color: var(--orange); border-color: #fff; color: white; }
 
-        /* ゴールとクリースの重なり具合を -15px にして数字が見えるように調整 */
         .svg-container { width: 100%; max-width: 450px; position: relative; margin-top: -15px; z-index: 1; }
         .area-path { stroke: var(--navy); stroke-width: 2; cursor: pointer; }
         .area-path.orange-slice { fill: #FFE0B2; }
@@ -84,43 +53,34 @@
         .area-text { fill: var(--navy); font-size: 22px; font-weight: 900; pointer-events: none; text-anchor: middle; dominant-baseline: middle; }
         .area-path.selected + .area-text { fill: white; }
 
-        .pos-row { display: flex; justify-content: center; gap: 8px; width: 100%; margin-top: 15px; }
-        .pos-row button {
-            background-color: #fff; border: 2px solid #ccc; border-radius: 8px;
-            padding: 10px 18px; font-size: 14px; font-weight: bold; color: #555; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+        /* 【修正点】打つ位置のボタンをカーブ配置 */
+        .pos-row { display: flex; justify-content: center; gap: 8px; width: 100%; margin-top: 25px; height: 50px;}
+        .pos-row button { background-color: #fff; border: 2px solid #ccc; border-radius: 8px; padding: 10px 18px; font-size: 14px; font-weight: bold; color: #555; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .pos-row button.selected { background-color: var(--navy-light); border-color: var(--navy); color: white; }
-
-        /* === ③ 右パネル (ゴーリー＆ステータス) === */
-        .right-panel { flex: 0 0 320px; display: flex; flex-direction: column; gap: 10px; padding: 15px;}
         
+        /* 緩やかなカーブを描くための高さ調整 */
+        .pos-row button:nth-child(1) { transform: translateY(-20px); } /* 左2 */
+        .pos-row button:nth-child(2) { transform: translateY(-5px); }  /* 左1 */
+        .pos-row button:nth-child(3) { transform: translateY(5px); }   /* 中央 */
+        .pos-row button:nth-child(4) { transform: translateY(-5px); }  /* 右1 */
+        .pos-row button:nth-child(5) { transform: translateY(-20px); } /* 右2 */
+
+        /* 右パネル */
+        .right-panel { flex: 0 0 320px; display: flex; flex-direction: column; gap: 10px; padding: 15px;}
         .action-section { display: flex; flex-direction: column; gap: 10px; }
         .action-section h4 { margin: 0 0 5px 0; text-align: center; font-size: 16px; font-weight: 900; color: var(--marine); }
-        
         .goalie-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
         select { width: 100%; font-size: 16px; padding: 10px; border-radius: 8px; border: 2px solid #ccc; font-weight: bold; background: #fff;}
         .add-goalie-form { display: flex; gap: 5px; }
         .add-goalie-form input { flex-grow: 1; padding: 8px; border-radius: 6px; border: 1px solid #aaa; font-size: 13px; }
         .add-goalie-form button { padding: 8px 12px; background-color: var(--navy-light); color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
         
-        #statusBox {
-            background: var(--navy); color: white; padding: 20px; border-radius: 12px;
-            font-size: 15px; line-height: 2.0; font-weight: bold; flex-grow: 1; border: 2px solid var(--navy-light);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
+        #statusBox { background: var(--navy); color: white; padding: 20px; border-radius: 12px; font-size: 15px; line-height: 2.0; font-weight: bold; flex-grow: 1; border: 2px solid var(--navy-light); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
         .val { color: var(--marine); font-size: 16px;}
 
-        /* === ④ 下部パネル (結果送信) === */
-        .bottom-panel {
-            background: var(--panel-bg); padding: 10px; border-radius: 16px; margin-top: 10px;
-            display: flex; justify-content: center; gap: 15px; height: 70px; align-items: center;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.4); border-top: 5px solid var(--orange);
-        }
-        .result-btn {
-            flex: 1; max-width: 220px; height: 100%; border-radius: 8px; border: none;
-            font-size: 18px; font-weight: 900; color: white; cursor: pointer; letter-spacing: 2px;
-            transition: 0.1s;
-        }
+        /* 下部パネル */
+        .bottom-panel { background: var(--panel-bg); padding: 10px; border-radius: 16px; margin-top: 10px; display: flex; justify-content: center; gap: 15px; height: 70px; align-items: center; box-shadow: 0 8px 16px rgba(0,0,0,0.4); border-top: 5px solid var(--orange); }
+        .result-btn { flex: 1; max-width: 220px; height: 100%; border-radius: 8px; border: none; font-size: 18px; font-weight: 900; color: white; cursor: pointer; letter-spacing: 2px; transition: 0.1s; }
         .result-btn:active { transform: translateY(4px); box-shadow: none !important; }
         .btn-goal { background-color: var(--orange); box-shadow: 0 4px 0px #c65300; }
         .btn-save { background-color: var(--marine); box-shadow: 0 4px 0px #0288d1; }
@@ -132,16 +92,10 @@
 
     <div class="main-container">
         <div class="left-panel panel">
-            <div class="add-member-form">
-                <input type="text" id="addMemberInput" placeholder="背番号(例: 99)">
-                <button onclick="addMember()">選手追加</button>
-            </div>
+            <div class="add-member-form"><input type="text" id="addMemberInput" placeholder="背番号(例: 99)"><button onclick="addMember()">選手追加</button></div>
             <div class="player-section">
                 <h4>🏃 AT (Shooter)</h4>
-                <div class="shooter-grid-container">
-                    <div class="shooter-grid" id="shooterGrid">
-                        </div>
-                </div>
+                <div class="shooter-grid-container"><div class="shooter-grid" id="shooterGrid"></div></div>
             </div>
         </div>
 
@@ -162,36 +116,11 @@
 
                 <div class="svg-container">
                     <svg viewBox="0 40 500 260" width="100%" height="auto">
-                        <g transform="rotate(72, 250, 50)">
-                            <path class="area-path marine-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '6', this)"></path>
-                            <path class="area-path orange-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '1', this)"></path>
-                            <text x="250" y="240" transform="rotate(-72, 250, 240)" class="area-text">6</text>
-                            <text x="250" y="150" transform="rotate(-72, 250, 150)" class="area-text">1</text>
-                        </g>
-                        <g transform="rotate(36, 250, 50)">
-                            <path class="area-path orange-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '7', this)"></path>
-                            <path class="area-path marine-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '2', this)"></path>
-                            <text x="250" y="240" transform="rotate(-36, 250, 240)" class="area-text">7</text>
-                            <text x="250" y="150" transform="rotate(-36, 250, 150)" class="area-text">2</text>
-                        </g>
-                        <g transform="rotate(0, 250, 50)">
-                            <path class="area-path marine-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '8', this)"></path>
-                            <path class="area-path orange-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '3', this)"></path>
-                            <text x="250" y="240" class="area-text">8</text>
-                            <text x="250" y="150" class="area-text">3</text>
-                        </g>
-                        <g transform="rotate(-36, 250, 50)">
-                            <path class="area-path orange-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '9', this)"></path>
-                            <path class="area-path marine-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '4', this)"></path>
-                            <text x="250" y="240" transform="rotate(36, 250, 240)" class="area-text">9</text>
-                            <text x="250" y="150" transform="rotate(36, 250, 150)" class="area-text">4</text>
-                        </g>
-                        <g transform="rotate(-72, 250, 50)">
-                            <path class="area-path marine-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '10', this)"></path>
-                            <path class="area-path orange-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '5', this)"></path>
-                            <text x="250" y="240" transform="rotate(72, 250, 240)" class="area-text">10</text>
-                            <text x="250" y="150" transform="rotate(72, 250, 150)" class="area-text">5</text>
-                        </g>
+                        <g transform="rotate(72, 250, 50)"><path class="area-path marine-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '6', this)"></path><path class="area-path orange-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '1', this)"></path><text x="250" y="240" transform="rotate(-72, 250, 240)" class="area-text">6</text><text x="250" y="150" transform="rotate(-72, 250, 150)" class="area-text">1</text></g>
+                        <g transform="rotate(36, 250, 50)"><path class="area-path orange-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '7', this)"></path><path class="area-path marine-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '2', this)"></path><text x="250" y="240" transform="rotate(-36, 250, 240)" class="area-text">7</text><text x="250" y="150" transform="rotate(-36, 250, 150)" class="area-text">2</text></g>
+                        <g transform="rotate(0, 250, 50)"><path class="area-path marine-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '8', this)"></path><path class="area-path orange-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '3', this)"></path><text x="250" y="240" class="area-text">8</text><text x="250" y="150" class="area-text">3</text></g>
+                        <g transform="rotate(-36, 250, 50)"><path class="area-path orange-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '9', this)"></path><path class="area-path marine-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '4', this)"></path><text x="250" y="240" transform="rotate(36, 250, 240)" class="area-text">9</text><text x="250" y="150" transform="rotate(36, 250, 150)" class="area-text">4</text></g>
+                        <g transform="rotate(-72, 250, 50)"><path class="area-path marine-slice" d="M 324.16,278.26 A 240,240 0 0,1 175.84,278.26 L 206.74,183.15 A 140,140 0 0,0 293.26,183.15 Z" data-category="area" onclick="selectItem('area', '10', this)"></path><path class="area-path orange-slice" d="M 293.26,183.15 A 140,140 0 0,1 206.74,183.15 L 231.46,107.07 A 60,60 0 0,0 268.54,107.07 Z" data-category="area" onclick="selectItem('area', '5', this)"></path><text x="250" y="240" transform="rotate(72, 250, 240)" class="area-text">10</text><text x="250" y="150" transform="rotate(72, 250, 150)" class="area-text">5</text></g>
                     </svg>
                 </div>
 
@@ -210,15 +139,9 @@
                 <h4>🧤 ゴーリー (Goalie)</h4>
                 <div class="goalie-group">
                     <select id="goalieSelect">
-                        <option value="#87 まりも">#87 まりも</option>
-                        <option value="#94 えぷ">#94 えぷ</option>
-                        <option value="コングちゃん">コングちゃん</option>
-                        <option value="その他">その他</option>
+                        <option value="#87 まりも">#87 まりも</option><option value="#94 えぷ">#94 えぷ</option><option value="コングちゃん">コングちゃん</option><option value="その他">その他</option>
                     </select>
-                    <div class="add-goalie-form">
-                        <input type="text" id="addGoalieInput" placeholder="新規ゴーリー追加">
-                        <button onclick="addGoalie()">追加</button>
-                    </div>
+                    <div class="add-goalie-form"><input type="text" id="addGoalieInput" placeholder="新規ゴーリー追加"><button onclick="addGoalie()">追加</button></div>
                 </div>
             </div>
 
@@ -239,21 +162,16 @@
     </div>
 
     <script>
-        const members = [
-            '#0', '#10', '#32', '#01', '#12', '#33', '#02', '#13', '#55',
-            '#05', '#15', '#56', '#06', '#17', '#57', '#07', '#18', '#72',
-            '#08', '#21', '#77', '#09', '#28', '#98'
-        ];
+        const members = [ '#0', '#10', '#32', '#01', '#12', '#33', '#02', '#13', '#55', '#05', '#15', '#56', '#06', '#17', '#57', '#07', '#18', '#72', '#08', '#21', '#77', '#09', '#28', '#98' ];
 
-        // ★フォームIDを書き換えてください
+        // ★フォームIDはご自身のものに置き換えてください
         const formURL = "https://docs.google.com/forms/d/e/1FAIpQLSfj6tmsihXcLB0IrSAJOmEoc6wmpn_5uTDC4xEVc-jb_eGh_g/formResponse";
-        const entries = { goalie: "entry.936925429", shooter: "entry.2097307624", pos: "entry.1120779862", area: "entry.XXXXX", target: "entry.1657406525", result: "entry.1439118581" };
+        const entries = { goalie: "entry.936925429", shooter: "entry.2097307624", pos: "entry.1120779862", area: "entry.1023284946", target: "entry.1657406525", result: "entry.1439118581" };
 
         let currentData = { shooter: "", pos: "", area: "", target: "" };
 
         function renderMembers() {
-            const grid = document.getElementById('shooterGrid');
-            grid.innerHTML = '';
+            const grid = document.getElementById('shooterGrid'); grid.innerHTML = '';
             members.forEach(num => {
                 const selected = (currentData.shooter === num) ? 'selected' : '';
                 grid.innerHTML += `<button class="shooter-btn ${selected}" data-category="shooter" onclick="selectItem('shooter', '${num}', this)">${num}</button>`;
@@ -261,8 +179,7 @@
         }
 
         function addMember() {
-            const input = document.getElementById('addMemberInput');
-            const num = input.value.trim();
+            const input = document.getElementById('addMemberInput'); const num = input.value.trim();
             if (!num) return;
             const fmtNum = num.startsWith('#') ? num : '#' + num;
             if(!members.includes(fmtNum)) { members.push(fmtNum); renderMembers(); }
@@ -270,19 +187,15 @@
         }
 
         function addGoalie() {
-            const input = document.getElementById('addGoalieInput');
-            const name = input.value.trim();
+            const input = document.getElementById('addGoalieInput'); const name = input.value.trim();
             if (!name) return;
             const select = document.getElementById('goalieSelect');
-            const newOption = document.createElement('option');
-            newOption.value = name; newOption.text = name;
-            select.add(newOption); select.value = name;
-            input.value = '';
+            const newOption = document.createElement('option'); newOption.value = name; newOption.text = name;
+            select.add(newOption); select.value = name; input.value = '';
         }
 
         function selectItem(category, value, element) {
-            currentData[category] = value;
-            updateStatusText();
+            currentData[category] = value; updateStatusText();
             document.querySelectorAll(`[data-category='${category}']`).forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
         }
@@ -295,7 +208,7 @@
         }
 
         function recordResult(resultValue) {
-            if (!currentData.shooter || !currentData.pos || !currentData.area || !currentData.target) { alert("未入力の項目があります！"); return; }
+            if (!currentData.shooter || !currentData.pos || !currentData.area || !currentData.target) { alert("⚠️ 未入力の項目があります！\n選手、位置、エリア、コースを全て選択してください。"); return; }
             const formData = new URLSearchParams();
             formData.append(entries.goalie, document.getElementById("goalieSelect").value);
             formData.append(entries.shooter, currentData.shooter); formData.append(entries.pos, currentData.pos);
